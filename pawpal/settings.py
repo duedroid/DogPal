@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'userinformation',
     'vaccination',
     'antiparasitics',
+    'veterinarian',
     'rest_framework_swagger',
 
 ]

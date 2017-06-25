@@ -1,14 +1,26 @@
 from django.db import models
 from datetime import date
+
 from doginformation.models import Dog
+from veterinarian.models import VetHos, Appointment
+
 
 class VaccinationFor(models.Model):
     name = models.CharField(max_length=100)
     routine = models.CharField(max_length=100)
+    note = models.TextField(blank=True)
+    vethos = models.ForeignKey(VetHos)
+    appointment = models.ManyToManyField(Appointment)
+
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+    timeupdate = models.DateTimeField(auto_now=True)
 
 class VaccinationRecord(models.Model):
-    veternarian = models.CharField(max_length=100)
-    next_vaccine = models.CharField(max_length=100)
+    next_vaccine = models.DateField()
     date_record = models.DateField(default=date.today)
     dog = models.ForeignKey(Dog, related_name='dogvaccine')
     vaccine_for = models.ForeignKey(VaccinationFor, related_name='vaccinationrecord')
+    note = models.TextField(blank=True)
+
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+    timeupdate = models.DateTimeField(auto_now=True)

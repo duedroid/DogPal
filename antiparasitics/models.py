@@ -3,13 +3,20 @@ from datetime import date
 from doginformation.models import Dog
 
 class AntiParasitics(models.Model):
-    next_dose = models.CharField(max_length=100)
+    next_dose = models.DateField()
     date_record = models.DateField(default=date.today)
     veterinarian = models.CharField(max_length=100)
-    dog = models.ForeignKey(Dog, related_name='antiparasitics')
+    dog = models.ForeignKey(Dog)
+    note = models.TextField(blank=True)
 
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+    timeupdate = models.DateTimeField(auto_now=True)
 
 class Therapy(models.Model):
     name = models.CharField(max_length=200)
     routine = models.CharField(max_length=200)
-    antiparasitics = models.ForeignKey(AntiParasitics, related_name='therapy')
+    antiparasitics = models.ForeignKey(AntiParasitics)
+    note = models.TextField(blank=True)
+
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+    timeupdate = models.DateTimeField(auto_now=True)

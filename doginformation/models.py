@@ -24,6 +24,7 @@ class Dog(models.Model):
     gender = models.PositiveSmallIntegerField(choices=GENDER_CHOICES)
     micro_no = models.CharField(max_length=100, blank=True, null=True)
     user = models.ForeignKey(Profile, related_name='dog')
+
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)
 
@@ -31,6 +32,7 @@ class Dog(models.Model):
 class DogPicture(models.Model):
     dog = models.ForeignKey(Dog, related_name='dogpicture')
     image = models.ImageField(upload_to='image/%Y/%m/')
+    
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)
 

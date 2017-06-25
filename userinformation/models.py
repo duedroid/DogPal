@@ -9,5 +9,6 @@ class Profile(models.Model):
     address = models.TextField(max_length=300)
     lineid = models.CharField(max_length=50)
     facebook = models.CharField(max_length=100)
+    
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)
