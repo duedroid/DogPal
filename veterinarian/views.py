@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets, mixins
 
-# Create your views here.
+from .serializers import AddAppointmentSerializer
+from .models import Appointment
+
+class AddAppointmentViewSet(mixins.CreateModelMixin,
+                    viewsets.GenericViewSet):
+    queryset = Appointment.objects.all()
+    serializer_class = AddAppointmentSerializer

@@ -33,7 +33,7 @@ class Dog(models.Model):
     color_secondary = models.CharField(max_length=20, blank=True, null=True)
     location = models.TextField(max_length=300)
     dominance = models.CharField(max_length=200)
-    status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES)
+    status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1)
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)

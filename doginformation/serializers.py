@@ -3,57 +3,25 @@ from rest_framework import serializers
 from userinformation.models import Profile
 from .models import Dog, DogPicture
 from veterinarian.models import Appointment, Hospital
+from dogpal.serializers import DogPictureSerializer
 
 
-class DogPictureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DogPicture
-        fields = ('image',)
+class AddDogSerializer(serializers.ModelSerializer):
+    dogpicture = DogPictureSerializer(many=True)
 
-
-class DogListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dog
-        fields = ('name',)
-
-    def to_representation(self, instance):
-        data = super(DogListSerializer, self).to_representation(instance)
-        data.update({
-            'dogpicture': DogPictureSerializer(DogPicture.objects.get(dog=instance.id)).data
-        })
-        return data
+        fields = ('dogpicture', 'profile', 'name', 'blood_type', 'breed', 'current_weight', 'age', 'birth_day', 'is_sterize', 'gender', 'micro_no', 'color_primary', 'color_secondary', 'location', 'dominance', 'status')
 
 
-class HospitalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Hospital
-        fields = ('name',)
+    # def create(self, request, *args, **kwargs):
+    #     data=request.DATA
 
+    #     f = Foo.objects.create()
 
-class AppointmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Appointment
-        fields = ('date', 'hospital', 'dog')
+    #     # ... create nested objects from request data ...
 
-    def to_representation(self, instance):
-        data = super(AppointmentSerializer, self).to_representation(instance)
-        data.update({
-            'hospital': HospitalSerializer(Hospital.objects.get(id=instance.hospital_id)).data,
-            'dog': DogListSerializer(Dog.objects.get(id=instance.dog_id)).data
-        })
-        return data
-
-
-class HomeSerializer(serializers.ModelSerializer):
-    dog = DogListSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Profile
-        fields = ('id', 'dog',)
-
-    def to_representation(self, instance):
-        data = super(HomeSerializer, self).to_representation(instance)
-        data.update({
-            'appointment': AppointmentSerializer(Appointment.objects.filter(status=True), many=True).data
-        })
-        return data
+    #     # ...
+    #     return Response(serializer.data,
+    #                     status=status.HTTP_201_CREATED,
+    #                     headers=headers)

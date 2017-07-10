@@ -1,8 +1,10 @@
-from rest_framework import viewsets
-from doginformation.serializers import HomeSerializer
+from rest_framework import viewsets, mixins
+from doginformation.serializers import AddDogSerializer
 from userinformation.models import Profile
+from .models import Dog
 
 
-class HomeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = HomeSerializer
+class AddDogViewSet(mixins.CreateModelMixin,
+                    viewsets.GenericViewSet):
+    queryset = Dog.objects.all()
+    serializer_class = AddDogSerializer
