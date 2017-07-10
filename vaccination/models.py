@@ -15,6 +15,10 @@ class VaccinationFor(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-timestamp']
+
+
 class VaccinationRecord(models.Model):
     next_vaccine = models.DateField()
     date_record = models.DateField(default=date.today)
@@ -24,3 +28,6 @@ class VaccinationRecord(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-timestamp']

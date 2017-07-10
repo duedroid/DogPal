@@ -12,6 +12,10 @@ class AntiParasitics(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-timestamp']
+
+
 class Therapy(models.Model):
     name = models.CharField(max_length=200)
     routine = models.CharField(max_length=200)
@@ -20,3 +24,6 @@ class Therapy(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-timestamp']
