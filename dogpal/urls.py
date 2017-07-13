@@ -4,7 +4,7 @@ from rest_framework_swagger.views import get_swagger_view
 from rest_framework.routers import DefaultRouter
 
 from .views_home import HomeViewSet
-from doginformation.views import AddDogViewSet
+from doginformation.views import AddDogViewSet, DogDetailViewSet
 from veterinarian.views import AddAppointmentViewSet
 
 schema_view = get_swagger_view(title='Pastebin API')
@@ -13,6 +13,7 @@ router = DefaultRouter()
 router.register(r'home', HomeViewSet)
 router.register(r'add-dog', AddDogViewSet)
 router.register(r'add-appointment', AddAppointmentViewSet)
+router.register(r'dog', DogDetailViewSet)
 
 urlpatterns = [
     url(r'^docs/$', schema_view),

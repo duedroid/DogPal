@@ -3,12 +3,7 @@ from rest_framework import serializers
 from userinformation.models import Profile
 from doginformation.models import Dog, DogPicture
 from veterinarian.models import Appointment, Hospital
-
-
-class DogPictureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DogPicture
-        fields = ('id', 'image')
+from doginformation.serializers import DogPictureSerializer
 
 
 class DogListSerializer(serializers.ModelSerializer):
