@@ -10,7 +10,10 @@ class VaccinationFor(models.Model):
     routine = models.CharField(max_length=100)
     note = models.TextField(blank=True)
     vethos = models.ForeignKey(VetHos)
-    appointment = models.ManyToManyField(Appointment)
+    serial = models.CharField(max_length=100, blank=True, null=True)
+    mfg = models.DateField(default=date.today)
+    exp = models.DateField(default=date.today)
+    appointment = models.ManyToManyField(Appointment, related_name='vaccinationfor')
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)

@@ -19,7 +19,7 @@ class AntiParasitics(models.Model):
 class Therapy(models.Model):
     name = models.CharField(max_length=200)
     routine = models.CharField(max_length=200)
-    antiparasitics = models.ForeignKey(AntiParasitics)
+    antiparasitics = models.ForeignKey(AntiParasitics, related_name='therapy')
     note = models.TextField(blank=True)
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)

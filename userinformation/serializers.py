@@ -1,16 +1,21 @@
-from rest_auth.registration.serializers import RegisterSerializer
+from rest_framework import serializers
 from userinformation.models import Profile
 
-# class RegistrationSerializer(RegisterSerializer):
-#     first_name = serializers.CharField(required=True)
-#     last_name = serializers.CharField(required=True)
-#     tel_1
 
-#     def get_cleaned_data(self):
-#         return {
-#             'first_name': self.validated_data.get('first_name', ''),
-#             'last_name': self.validated_data.get('last_name', ''),
-#             'username': self.validated_data.get('username', ''),
-#             'password': self.validated_data.get('password', ''),
-#             'email': self.validated_data.get('email', '')
-#         }
+class UserRegisterSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = ('id', 'email', 'password',
+                  'first_name', 'last_name', 'tel_1',
+                  'tel_2', 'address', 'city',
+                  'country', 'zip_code')
+        write_only_fields = ('password',)
+        read_only_fields = ('id',)
+
+    def create(self, validated_data):
+        user = super(UserRegisterSerializer, self).create_user(validated_data)
+        if 'password' in validated_data:
+              user.set_password(validated_data['password'])
+              user.save()
+        return user

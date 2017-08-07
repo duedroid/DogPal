@@ -9,7 +9,7 @@ from doginformation.serializers import DogPictureSerializer
 class DogListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dog
-        fields = ('name',)
+        fields = ('id', 'name',)
 
     def to_representation(self, instance):
         data = super(DogListSerializer, self).to_representation(instance)
@@ -22,13 +22,13 @@ class DogListSerializer(serializers.ModelSerializer):
 class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital
-        fields = ('name',)
+        fields = ('id', 'name',)
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ('date', 'hospital', 'dog')
+        fields = ('id', 'date', 'is_overdate')
 
     def to_representation(self, instance):
         data = super(AppointmentSerializer, self).to_representation(instance)
@@ -40,11 +40,11 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
 
 class HomeSerializer(serializers.ModelSerializer):
-    dog = DogListSerializer(many=True, read_only=True)
+    dogpicture = DogPictureSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Profile
-        fields = ('id', 'dog',)
+        model = Dog
+        fields = ('id', 'name', 'dogpicture',)
 
     def to_representation(self, instance):
         data = super(HomeSerializer, self).to_representation(instance)

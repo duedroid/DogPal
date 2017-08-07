@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import date
-from userinformation.models import Profile
+from django.conf import settings
 
 
 class Dog(models.Model):
@@ -19,7 +19,7 @@ class Dog(models.Model):
         (2, 'Death')
     )
 
-    profile = models.ForeignKey(Profile, related_name='dog')
+    profile = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=200)
     blood_type = models.CharField(max_length=20)
     breed = models.CharField(max_length=100)

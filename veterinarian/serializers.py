@@ -6,4 +6,4 @@ from .models import Appointment
 class AddAppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ('hospital', 'dog', 'date', 'status')
+        fields = ('id', 'hospital', 'dog', 'date', 'status')
