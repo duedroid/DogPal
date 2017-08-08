@@ -1,19 +1,16 @@
 from django.db import models
+from django.conf import settings
 from datetime import date
 
-from doginformation.models import Dog
+from dog.models import Dog
 from veterinarian.models import VetHos, Appointment
 
 
-class VaccinationFor(models.Model):
+class VaccineFor(models.Model):
     name = models.CharField(max_length=100)
     routine = models.CharField(max_length=100)
     note = models.TextField(blank=True)
-    vethos = models.ForeignKey(VetHos)
-    serial = models.CharField(max_length=100, blank=True, null=True)
-    mfg = models.DateField(default=date.today)
-    exp = models.DateField(default=date.today)
-    appointment = models.ManyToManyField(Appointment, related_name='vaccinationfor')
+    appointment = models.ManyToManyField(Appointment, related_name='vaccine_for')
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)
@@ -22,11 +19,21 @@ class VaccinationFor(models.Model):
         ordering = ['-timestamp']
 
 
-class VaccinationRecord(models.Model):
+class VaccineStockDetail(models.Model):
+    vaccinationfor = models.ForeignKey(VaccineFor, related_name='vaccine_stock_detail')
+    image = models.ImageField(upload_to='vaccine/%Y/%m/')
+    brand = models.CharField(max_length=100)
+    serial = models.CharField(max_length=100)
+    mfg = models.DateField(default=date.today)
+    exp = models.DateField(default=date.today)
+
+
+class VaccineRecord(models.Model):
     next_vaccine = models.DateField()
     date_record = models.DateField(default=date.today)
-    dog = models.ForeignKey(Dog, related_name='dogvaccine')
-    vaccine_for = models.ForeignKey(VaccinationFor, related_name='vaccinationrecord')
+    dog = models.ForeignKey(Dog)
+    vaccine_stock = models.ManyToManyField(VaccineStockDetail, related_name='vaccine_record')
+    veterinarian = models.ForeignKey(settings.AUTH_USER_MODEL)
     note = models.TextField(blank=True)
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)

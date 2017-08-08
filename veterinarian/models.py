@@ -2,7 +2,7 @@ from django.db import models
 from datetime import date
 from django.conf import settings
 
-from doginformation.models import Dog
+from dog.models import Dog
 
 
 class Hospital(models.Model):
@@ -19,7 +19,7 @@ class Hospital(models.Model):
 
 class VetHos(models.Model):
     vetarinarian = models.ForeignKey(settings.AUTH_USER_MODEL)
-    hospital = models.ForeignKey(Hospital, related_name='hos')
+    hospital = models.ForeignKey(Hospital, related_name='vethos')
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     timeupdate = models.DateTimeField(auto_now=True)

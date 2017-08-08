@@ -1,8 +1,8 @@
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
-from doginformation.serializers import AddDogSerializer, DogDetailSerializer
-from userinformation.models import Profile
+from dog.serializers import AddDogSerializer, DogDetailSerializer
+from account.models import Account
 from .models import Dog
 
 

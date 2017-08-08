@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
-from userinformation.models import Profile
-from doginformation.models import Dog, DogPicture
+from account.models import Account
+from dog.models import Dog, Picture
 from veterinarian.models import Appointment, Hospital
-from doginformation.serializers import DogPictureSerializer
+from dog.serializers import DogPictureSerializer
 
 
 class DogListSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Dog
         fields = ('id', 'name',)
@@ -20,12 +21,14 @@ class DogListSerializer(serializers.ModelSerializer):
 
 
 class HospitalSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Hospital
         fields = ('id', 'name',)
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Appointment
         fields = ('id', 'date', 'is_overdate')
@@ -40,7 +43,6 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
 
 class HomeSerializer(serializers.ModelSerializer):
-    dogpicture = DogPictureSerializer(many=True, read_only=True)
 
     class Meta:
         model = Dog
@@ -49,6 +51,7 @@ class HomeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super(HomeSerializer, self).to_representation(instance)
         data.update({
-            'appointment': AppointmentSerializer(Appointment.objects.filter(status=True), many=True).data
+            'appointment': AppointmentSerializer(Appointment.objects.filter(status=True), many=True).data,
+            'picture': DogPictureSerializer(many=True, read_only=True).data
         })
         return data

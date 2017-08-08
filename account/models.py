@@ -6,16 +6,20 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 
-class ProfileManager(BaseUserManager):
+class AccountManager(BaseUserManager):
 
-    def _create_user(self, email, set_password, is_veterinarian,
+    def _create_user(self, email, password, is_veterinarian=False,
                      **extra_fields):
+        now = timezone.now()
         if not email:
             raise ValueError(_('The given email must be set'))
 
         user = self.model(
             email=self.normalize_email(email),
             is_veterinarian=is_veterinarian,
+            last_active=now,
+            date_joined=now,
+            is_active=True,
             **extra_fields
         )
         user.set_password(password)
@@ -25,7 +29,6 @@ class ProfileManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         return self._create_user(email,
                                  password=password,
-                                 is_veterinarian=False,
                                  **extra_fields)
 
     def create_veterinarian(self, email, password=None, **extra_fields):
@@ -37,7 +40,6 @@ class ProfileManager(BaseUserManager):
     def create_superuser(self, email, password, **extra_fields):
         user = self._create_user(email,
                                  password=password,
-                                 is_veterinarian=False,
                                  **extra_fields)
         user.is_admin = True
         user.is_superuser = True
@@ -45,7 +47,7 @@ class ProfileManager(BaseUserManager):
         return user
 
 
-class Profile(AbstractBaseUser, PermissionsMixin):
+class Account(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         verbose_name='Email address',
         max_length=255,
@@ -61,20 +63,32 @@ class Profile(AbstractBaseUser, PermissionsMixin):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longtitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
-    address = models.TextField(max_length=200)
+    address = models.TextField(max_length=255)
     city = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=10)
 
     is_admin = models.BooleanField(default=False)
     is_veterinarian = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    token = models.CharField(max_length=32, null=True, db_index=True)
 
     specialties = models.CharField(max_length=100, null=True, blank=True)
 
     last_active = models.DateTimeField(_('last active'), blank=True, null=True)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
-    objects = ProfileManager()
+    objects = AccountManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    @property
+    def is_staff(self):
+        return self.is_admin
+
+    def get_short_name(self):
+        return self.email
+
+    def get_full_name(self):
+        return '{0} {1}'.format(self.first_name, self.last_name)

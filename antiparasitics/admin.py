@@ -1,6 +1,13 @@
 from django.contrib import admin
-from .models import *
+from .models import AntiParasitics, Therapy
 
 
-admin.site.register(AntiParasitics)
-admin.site.register(Therapy)
+@admin.register(AntiParasitics)
+class AntiParasiticsAdmin(admin.ModelAdmin):
+    list_display = ('id',)
+
+
+@admin.register(Therapy)
+class TherapyAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)

@@ -1,12 +1,13 @@
 from django.db import models
 from datetime import date
-from doginformation.models import Dog
+from dog.models import Dog
+
 
 class AntiParasitics(models.Model):
     next_dose = models.DateField()
     date_record = models.DateField(default=date.today)
     veterinarian = models.CharField(max_length=100)
-    dog = models.ForeignKey(Dog)
+    dog = models.ForeignKey(Dog, related_name='antiparasitics')
     note = models.TextField(blank=True)
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)

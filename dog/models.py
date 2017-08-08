@@ -19,7 +19,7 @@ class Dog(models.Model):
         (2, 'Death')
     )
 
-    profile = models.ForeignKey(settings.AUTH_USER_MODEL)
+    account = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=200)
     blood_type = models.CharField(max_length=20)
     breed = models.CharField(max_length=100)
@@ -42,9 +42,9 @@ class Dog(models.Model):
         ordering = ['-timestamp']
 
 
-class DogPicture(models.Model):
-    dog = models.ForeignKey(Dog, related_name='dogpicture', blank=True, null=True)
-    image = models.ImageField(upload_to='image/%Y/%m/')
+class Picture(models.Model):
+    dog = models.ForeignKey(Dog, related_name='picture', blank=True, null=True)
+    image = models.ImageField(upload_to='dog_image/%Y/%m/')
     vector = models.CharField(max_length=100, blank=True, null=True)
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)

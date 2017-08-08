@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from vaccination.models import VaccinationRecord
+from vaccination.models import VaccineRecord
 
-class VaccinationRecordSerailizer(serializers.ModelSerializer):
+class VaccineRecordSerailizer(serializers.ModelSerializer):
     class Meta:
-        model = VaccinationRecord
+        model = VaccineRecord
         fields = ('id', 'next_vaccine', 'date_record', 'note')

@@ -16,9 +16,26 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'userinformation.Profile'
+AUTH_USER_MODEL = 'account.Account'
 
-# Application definition
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+ACCOUNT_USERNAME_REQUIRED = False
+
+ACCOUNT_EMAIL_REQUIRED = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'account.authentication.APIAuthentication'
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAdminUser',
+    ],
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -29,8 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
 
-    'doginformation',
-    'userinformation',
+    'dog',
+    'account',
     'vaccination',
     'antiparasitics',
     'veterinarian',
