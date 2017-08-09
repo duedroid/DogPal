@@ -45,13 +45,14 @@ class AppointmentSerializer(serializers.ModelSerializer):
 class HomeSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Dog
-        fields = ('id', 'name', 'dogpicture',)
+        model = Account
+        fields = ()
 
     def to_representation(self, instance):
         data = super(HomeSerializer, self).to_representation(instance)
+        dog = Dog.objects.filter(account=instance.id)
         data.update({
-            'appointment': AppointmentSerializer(Appointment.objects.filter(status=True), many=True).data,
-            'picture': DogPictureSerializer(many=True, read_only=True).data
+            'dog': DogListSerializer(dog, many=True).data,
+            'appointment': AppointmentSerializer(Appointment.objects.filter(status=True, dog=dog), many=True).data,
         })
         return data

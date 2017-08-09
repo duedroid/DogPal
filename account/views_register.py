@@ -13,8 +13,8 @@ class UserRegisterViewSet(mixins.CreateModelMixin,
     permission_classes = (AllowAny,)
     serializer_class = UserRegisterSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = UserRegisterSerializer(data=request.data)
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             user = Account.objects.create_user(
                 email = serializer.data['email'],

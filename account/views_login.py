@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed, PermissionDenied, NotAuthenticated
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
 from .authentication import APIAuthentication
 from rest_framework.views import APIView
 
@@ -15,7 +15,7 @@ from account.models import Account
 class UserLoginViewSet(mixins.CreateModelMixin,
                        viewsets.GenericViewSet):
     queryset = Account.objects.all()
-    authentication_classes = (APIAuthentication,)
+    authentication_classes = (APIAuthentication, SessionAuthentication)
     permissions_classes = (AllowAny,)
     allow_redirects = True
     serializer_class = UserLogInSerializer
@@ -27,7 +27,7 @@ class UserLoginViewSet(mixins.CreateModelMixin,
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            email = serializer.data.get('email') or request.user
+            email = serializer.data.get('email')
             password = serializer.data.get('password')
             msg = None
 

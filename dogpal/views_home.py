@@ -7,10 +7,10 @@ from rest_framework.response import Response
 
 class HomeViewSet(mixins.ListModelMixin,
                   viewsets.GenericViewSet):
-    queryset = Dog.objects.all()
+    queryset = Account.objects.all()
     serializer_class = HomeSerializer
 
     def list(self, request):
-        queryset = Dog.objects.filter(account=request.user)
+        queryset = Account.objects.filter(account=request.user).first()
         serializer = HomeSerializer(queryset, many=True)
         return Response(serializer.data)

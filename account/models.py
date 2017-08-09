@@ -8,15 +8,12 @@ from django.utils.translation import ugettext_lazy as _
 
 class AccountManager(BaseUserManager):
 
-    def _create_user(self, email, password, is_veterinarian=False,
-                     **extra_fields):
-        now = timezone.now()
+    def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError(_('The given email must be set'))
-
+        now = timezone.now()
         user = self.model(
             email=self.normalize_email(email),
-            is_veterinarian=is_veterinarian,
             last_active=now,
             date_joined=now,
             is_active=True,
@@ -27,18 +24,20 @@ class AccountManager(BaseUserManager):
         return user
 
     def create_user(self, email, password=None, **extra_fields):
-        return self._create_user(email,
+        return self._create_user(email=email,
                                  password=password,
                                  **extra_fields)
 
     def create_veterinarian(self, email, password=None, **extra_fields):
-        return self._create_user(email,
+        user = self._create_user(email=email,
                                  password=password,
-                                 is_veterinarian=True,
                                  **extra_fields)
+        user.is_veterinarian = True
+        user.save()
+        return user
 
     def create_superuser(self, email, password, **extra_fields):
-        user = self._create_user(email,
+        user = self._create_user(email=email,
                                  password=password,
                                  **extra_fields)
         user.is_admin = True
@@ -70,8 +69,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     is_veterinarian = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-
-    token = models.CharField(max_length=32, null=True, db_index=True)
 
     specialties = models.CharField(max_length=100, null=True, blank=True)
 

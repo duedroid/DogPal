@@ -1,10 +1,10 @@
 from account.models import Account
 from django.contrib.auth.hashers import check_password
 
-from rest_framework.authentication import BaseAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework import exceptions
 
-class APIAuthentication(BaseAuthentication):
+class APIAuthentication(BasicAuthentication):
     def authenticate(self, request):
         email = request.POST.get('email')
         password = request.POST.get('password')
