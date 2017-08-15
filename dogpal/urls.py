@@ -2,6 +2,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework_swagger.views import get_swagger_view
 from rest_framework.routers import DefaultRouter
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
 from .views_home import HomeViewSet
 from dog.views import AddDogViewSet, DogDetailViewSet
@@ -23,8 +24,9 @@ router.register(r'login', UserLoginViewSet)
 urlpatterns = [
     url(r'^docs/$', schema_view),
     url(r'^admin/', admin.site.urls),
-    url(r'^api/logout/$', LogoutView.as_view()),
     url(r'^api/', include(router.urls)),
-
-    # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/logout/$', LogoutView.as_view()),
+    # url(r'^api/login/', obtain_jwt_token),
+    url(r'^api/token-refresh/', refresh_jwt_token),
+    url(r'^api/token-verify/', verify_jwt_token),
 ]

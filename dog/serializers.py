@@ -14,17 +14,29 @@ class DogPictureSerializer(serializers.ModelSerializer):
 
 
 class AddDogSerializer(serializers.ModelSerializer):
-    dogpicture = DogPictureSerializer(many=True)
 
     class Meta:
         model = Dog
-        exclude = ('account', 'timestamp', 'timeupdate',)
+        fields = ('name', 'blood_type', 'breed', 'current_weight',
+                  'age', 'birth_day', 'is_sterize', 'gender',
+                  'micro_no', 'color_primary', 'color_secondary',
+                  'location', 'dominance')
+
+    def to_representation(self, instance):
+        data = super(AddDogSerializer, self).to_representation(instance)
+        data.update({
+            'dogpicture': Picture.image,
+        })
+        return data
 
 
 class DogDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dog
-        exclude = ('account', 'timestamp', 'timeupdate',)
+        fields = ('name', 'blood_type', 'breed', 'current_weight',
+                  'age', 'birth_day', 'is_sterize', 'gender',
+                  'micro_no', 'color_primary', 'color_secondary',
+                  'location', 'dominance', 'dogpicture')
 
     def to_representation(self, instance):
         data = super(DogDetailSerializer, self).to_representation(instance)

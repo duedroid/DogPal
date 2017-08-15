@@ -80,6 +80,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+    def __str__(self):
+        return self.email
+
     @property
     def is_staff(self):
         return self.is_admin
