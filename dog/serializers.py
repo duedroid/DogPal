@@ -82,3 +82,10 @@ class DogDetailSerializer(serializers.ModelSerializer):
             'dogpicture': DogPictureSerializer(Picture.objects.filter(dog=instance.id), many=True).data
         })
         return data
+
+
+class DogNameListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Dog
+        fields = ('name',)
