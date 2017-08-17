@@ -4,18 +4,43 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-from dog.serializers import AddDogSerializer, DogDetailSerializer
+from dog.serializers import AddorEditDogSerializer, DogDetailSerializer, DogImageSerializer
 from account.models import Account
 from .models import Dog, Picture
 
 
-class AddDogViewSet(mixins.CreateModelMixin,
-                    viewsets.GenericViewSet):
-    queryset = Dog.objects.all()
-    serializer_class = AddDogSerializer
+class AddDogImageViewSet(mixins.CreateModelMixin,
+                         viewsets.GenericViewSet):
+    queryset = Picture.objects.all()
+    serializer_class = DogImageSerializer
     permissions_classes = (IsAuthenticated,)
 
     def create(self, request):
+        if request.user.is_veterinarian:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            dog = Dog.objects.filter(account=request.user).first()
+            image = Picture.objects.create(image=serializer.data['image'], dog=dog)
+            image.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddorEditDogViewSet(mixins.CreateModelMixin,
+                          mixins.UpdateModelMixin,
+                          mixins.RetrieveModelMixin,
+                          viewsets.GenericViewSet):
+    queryset = Dog.objects.all()
+    serializer_class = AddorEditDogSerializer
+    permissions_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        if request.user.is_veterinarian:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             dog = Dog.objects.create(
@@ -32,14 +57,46 @@ class AddDogViewSet(mixins.CreateModelMixin,
                 color_primary=serializer.data['color_primary'],
                 color_secondary=serializer.data['color_secondary'],
                 location=serializer.data['location'],
-                dominance=serializer.data['dominance'])
-            picture = Picture.objects.create(image=serializer.data['picture'], dog=dog)
+                dominance=serializer.data['dominance'],
+                status=serializer.data['status'])
             dog.save()
-            picture.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def update(self, request, pk=None):
+        if request.user.is_veterinarian:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            dog = Dog.objects.filter(id=pk, account=request.user).first()
+            dog.name = serializer.data['name']
+            dog.blood_type = serializer.data['blood_type']
+            dog.breed = serializer.data['breed']
+            dog.current_weight = serializer.data['current_weight']
+            dog.age = serializer.data['age']
+            dog.birth_day = serializer.data['birth_day']
+            dog.is_sterize = serializer.data['is_sterize']
+            dog.gender = serializer.data['gender']
+            dog.micro_no = serializer.data['micro_no']
+            dog.color_primary = serializer.data['color_primary']
+            dog.color_secondary = serializer.data['color_secondary']
+            dog.location = serializer.data['location']
+            dog.dominance = serializer.data['dominance']
+            dog.status = serializer.data['status']
+            dog.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        if request.user.is_veterinarian:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        dog = Dog.objects.filter(id=pk, account=request.user).first()
+        serializer = AddorEditDogSerializer(dog)
+        return Response(serializer.data)
 
 
 
@@ -51,6 +108,9 @@ class DogDetailViewSet(mixins.RetrieveModelMixin,
     permissions_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
-        dog = Dog.objects.get(id=pk)
+        if request.user.is_veterinarian:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        dog = Dog.objects.filter(id=pk).first()
         serializer = DogDetailSerializer(dog)
         return Response(serializer.data)

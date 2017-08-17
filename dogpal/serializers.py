@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from dog.models import Dog, Picture
 from veterinarian.models import Appointment, Hospital
-from dog.serializers import DogPictureSerializer
+from dog.serializers import DogImageSerializer
 
 
 class DogListSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class DogListSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super(DogListSerializer, self).to_representation(instance)
         data.update({
-            'dogpicture': DogPictureSerializer(Picture.objects.filter(dog=instance.id).first()).data
+            'image': DogPictureSerializer(Picture.objects.filter(dog=instance.id).first()).data
         })
         return data
 

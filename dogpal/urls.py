@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
 from .views_home import HomeViewSet
-from dog.views import AddDogViewSet, DogDetailViewSet
+from dog.views import DogDetailViewSet, AddDogImageViewSet, AddorEditDogViewSet
 from veterinarian.views import AddAppointmentViewSet
 from account.views_register import UserRegisterViewSet
 from account.views_login import LogoutView
@@ -15,11 +15,11 @@ schema_view = get_swagger_view(title='DogPal API')
 router = DefaultRouter()
 
 router.register(r'home', HomeViewSet)
-router.register(r'add-dog', AddDogViewSet)
+router.register(r'add-dog', AddorEditDogViewSet)
+router.register(r'add-image', AddDogImageViewSet)
 router.register(r'add-appointment', AddAppointmentViewSet)
 router.register(r'dog', DogDetailViewSet)
 router.register(r'register', UserRegisterViewSet)
-# router.register(r'login', UserLoginViewSet)
 
 urlpatterns = [
     url(r'^api/$', schema_view),
