@@ -2,8 +2,15 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin, Permission)
-from django.utils import timezone
+from django.contrib.auth.validators import UnicodeUsernameValidator, ASCIIUsernameValidator
+from django.utils import timezone, six
 from django.utils.translation import ugettext_lazy as _
+
+
+def generate_username():
+    import random
+    import string
+    return ''.join(random.sample(string.ascii_lowercase, 6))
 
 
 class AccountManager(BaseUserManager):
@@ -11,14 +18,11 @@ class AccountManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError(_('The given email must be set'))
-        now = timezone.now()
         user = self.model(
             email=self.normalize_email(email),
-            last_active=now,
-            date_joined=now,
-            is_active=True,
             **extra_fields
         )
+        user.username = generate_username()
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -33,13 +37,12 @@ class AccountManager(BaseUserManager):
                                  password=password,
                                  **extra_fields)
         user.is_veterinarian = True
-        user.save()
+        user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password, **extra_fields):
+    def create_superuser(self, email, password):
         user = self._create_user(email=email,
-                                 password=password,
-                                 **extra_fields)
+                                 password=password)
         user.is_admin = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -47,6 +50,19 @@ class AccountManager(BaseUserManager):
 
 
 class Account(AbstractBaseUser, PermissionsMixin):
+    username_validator = UnicodeUsernameValidator() if six.PY3 else ASCIIUsernameValidator()
+
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
+
     email = models.EmailField(
         verbose_name='Email address',
         max_length=255,
@@ -92,3 +108,17 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return '{0} {1}'.format(self.first_name, self.last_name)
+
+    @staticmethod
+    def is_unique_email(email):
+        return not Account.objects.filter(username=email).exists()
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True

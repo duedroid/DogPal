@@ -25,7 +25,7 @@ class AddDogSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super(AddDogSerializer, self).to_representation(instance)
         data.update({
-            'dogpicture': Picture.image,
+            'picture': Picture.image,
         })
         return data
 

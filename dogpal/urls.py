@@ -8,10 +8,10 @@ from .views_home import HomeViewSet
 from dog.views import AddDogViewSet, DogDetailViewSet
 from veterinarian.views import AddAppointmentViewSet
 from account.views_register import UserRegisterViewSet
-from account.views_login import UserLoginViewSet, LogoutView
+from account.views_login import LogoutView
 
 
-schema_view = get_swagger_view(title='Pastebin API')
+schema_view = get_swagger_view(title='DogPal API')
 router = DefaultRouter()
 
 router.register(r'home', HomeViewSet)
@@ -19,14 +19,14 @@ router.register(r'add-dog', AddDogViewSet)
 router.register(r'add-appointment', AddAppointmentViewSet)
 router.register(r'dog', DogDetailViewSet)
 router.register(r'register', UserRegisterViewSet)
-router.register(r'login', UserLoginViewSet)
+# router.register(r'login', UserLoginViewSet)
 
 urlpatterns = [
-    url(r'^docs/$', schema_view),
+    url(r'^api/$', schema_view),
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
-    url(r'^api/logout/$', LogoutView.as_view()),
-    # url(r'^api/login/', obtain_jwt_token),
+    url(r'^api/logout/', LogoutView.as_view()),
+    url(r'^api/login/', obtain_jwt_token),
     url(r'^api/token-refresh/', refresh_jwt_token),
     url(r'^api/token-verify/', verify_jwt_token),
 ]
