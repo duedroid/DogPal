@@ -11,6 +11,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
                   'address', 'city', 'zip_code')
         write_only_fields = ('password')
 
+
 class UserLogInSerializer(serializers.Serializer):
 
     email = serializers.CharField(max_length=255)

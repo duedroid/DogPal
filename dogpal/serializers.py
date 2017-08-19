@@ -14,7 +14,7 @@ class DogListSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super(DogListSerializer, self).to_representation(instance)
         data.update({
-            'image': DogPictureSerializer(Picture.objects.filter(dog=instance.id).first()).data
+            'image': DogImageSerializer(Picture.objects.filter(dog=instance.id).first()).data
         })
         return data
 
