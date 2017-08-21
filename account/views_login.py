@@ -32,15 +32,13 @@ class UserLoginViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             email_regex = re.compile(r'[^@]+@[^@]+\.[^@]+')
             if email_regex.match(email):
                 msg = 'This email or password is not valid.'
-            else:
-                msg = 'This username or password is not valid.'
 
             user = authenticate(email=email, password=password)
             if not user:
                 raise AuthenticationFailed(msg)
 
             login(request, user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

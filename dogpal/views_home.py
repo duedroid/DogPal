@@ -2,7 +2,6 @@ from rest_framework import viewsets, mixins
 from rest_framework import status
 from .serializers import HomeSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from dog.models import Dog
 from rest_framework.response import Response

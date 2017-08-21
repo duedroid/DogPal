@@ -41,6 +41,9 @@ class Dog(models.Model):
     class Meta:
         ordering = ['-timestamp']
 
+    def __str__(self):
+        return self.name
+
 
 class Picture(models.Model):
     dog = models.ForeignKey(Dog, related_name='picture', blank=True, null=True)

@@ -2,7 +2,6 @@ from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from dog.serializers import AddorEditDogSerializer, DogDetailSerializer, DogImageSerializer
 from account.models import Account
@@ -13,7 +12,7 @@ class AddDogImageViewSet(mixins.CreateModelMixin,
                          viewsets.GenericViewSet):
     queryset = Picture.objects.all()
     serializer_class = DogImageSerializer
-    permissions_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request):
         if request.user.is_veterinarian:
