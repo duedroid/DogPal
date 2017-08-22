@@ -26,6 +26,7 @@ class AddImageViewSet(mixins.CreateModelMixin,
 
             image = Image.objects.create(name=serializer.data['name'],
                                          image=request.data.get('image'))
+
             url = 'http://161.246.6.240:10100/server/dog/extract_features/'
             file = {'path': open(settings.BASE_DIR+image.image.url, 'rb').read()}
             r = json.loads(requests.post(url, files=file).content)
