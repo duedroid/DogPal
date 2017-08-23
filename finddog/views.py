@@ -37,7 +37,7 @@ class DistanceVectorViewSet(mixins.CreateModelMixin,
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid() and serializer.data['name_1'] != serializer.data['name_2']:
             image_1 = Image.objects.filter(name=serializer.data['name_1']).first()
             image_2 = Image.objects.filter(name=serializer.data['name_2']).first()
 
@@ -49,20 +49,21 @@ class DistanceVectorViewSet(mixins.CreateModelMixin,
             import requests
             import json
             if not image_1.vector:
-                file = {'path': open(settings.BASE_DIR+image_1.image.url, 'rb').read()}
-                r = json.load(requests.post(url, files=file).content)
+                file = {'path': open(image_1.image.path, 'rb').read()}
+                r = requests.post(url, files=file).json()
+                print(r)
                 image_1.vector = r['payload']['reduced_features']
                 image_1.save(update_fields=['vector'])
             if not image_2.vector:
-                file = {'path': open(settings.BASE_DIR+image_2.image.url, 'rb').read()}
-                r = json.load(requests.post(url, files=file).content)
+                file = {'path': open(image_2.image.path, 'rb').read()}
+                r = requests.post(url, files=file).json()
                 image_2.vector = r['payload']['reduced_features']
                 image_2.save(update_fields=['vector'])
 
             import ast
             from math import sqrt
-            vector_1 = ast.literal_eval(image_1.vector)
-            vector_2 = ast.literal_eval(image_2.vector)
+            vector_1 = json.loads(image_1.vector) if type(image_1.vector) == str else image_1.vector
+            vector_2 = json.loads(image_2.vector) if type(image_2.vector) == str else image_2.vector
             distance_power_of_2 = 0
             for i in range(0,14):
                 distance_power_of_2 += (vector_1[i]-vector_2[i])**2

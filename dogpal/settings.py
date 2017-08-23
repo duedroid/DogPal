@@ -98,7 +98,7 @@ DATABASES = {
         'HOST': '161.246.6.240',
         'NAME': 'dogpal',
         'USER': 'root',
-        'PASSWORD': "1234   ",
+        'PASSWORD': "1234",
 
     }
 }
