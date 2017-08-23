@@ -21,16 +21,8 @@ class AddImageViewSet(mixins.CreateModelMixin,
         serializer = self.serializer_class(data=request.data)
         has_image = Image.objects.filter(name=request.data['name']).first()
         if serializer.is_valid() and not has_image:
-            import requests
-            import json
-
             image = Image.objects.create(name=serializer.data['name'],
                                          image=request.data.get('image'))
-
-            url = 'http://161.246.6.240:10100/server/dog/extract_features/'
-            file = {'path': open(settings.BASE_DIR+image.image.url, 'rb').read()}
-            r = json.loads(requests.post(url, files=file).content)
-            image.vector = r['payload']['reduced_features']
             image.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
@@ -51,6 +43,21 @@ class DistanceVectorViewSet(mixins.CreateModelMixin,
 
             if not image_1 or not image_2:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            url = 'http://161.246.6.240:10100/server/dog/extract_features/'
+
+            import requests
+            import json
+            if not image_1.vector:
+                file = {'path': open(settings.BASE_DIR+image_1.image.url, 'rb').read()}
+                r = json.load(requests.post(url, files=file).content)
+                image_1.vector = r['payload']['reduced_features']
+                image_1.save(update_fields=['vector'])
+            if not image_2.vector:
+                file = {'path': open(settings.BASE_DIR+image_2.image.url, 'rb').read()}
+                r = json.load(requests.post(url, files=file).content)
+                image_2.vector = r['payload']['reduced_features']
+                image_2.save(update_fields=['vector'])
 
             import ast
             from math import sqrt

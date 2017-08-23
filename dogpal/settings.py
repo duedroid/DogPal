@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'dogpal.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '161.246.6.240'
+        'HOST': '161.246.6.240',
         'NAME': 'dogpal',
         'USER': 'root',
         'PASSWORD': "1234   ",
@@ -149,3 +149,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+from .local_settings import *
