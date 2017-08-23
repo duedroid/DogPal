@@ -9,7 +9,7 @@ from utils.serializers import Base64ImageField
 
 
 class DogImageSerializer(serializers.ModelSerializer):
-    # image = Base64ImageField(max_length=None, use_url=True, allow_empty_file=True, allow_null=True, required=False)
+    image = Base64ImageField(max_length=None, use_url=True, allow_empty_file=True, allow_null=True, required=False)
 
     class Meta:
         model = Picture

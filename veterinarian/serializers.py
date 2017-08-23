@@ -7,10 +7,10 @@ from dog.models import Dog
 class AddAppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ('hospital', 'dog', 'date', 'status')
+        fields = ('hospital', 'dog', 'date')
 
 
-class HospitalListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Hospital
-        fields = ('name',)
+# class HospitalListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Hospital
+#         fields = ('name',)
