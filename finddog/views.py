@@ -50,19 +50,27 @@ class DistanceVectorViewSet(mixins.CreateModelMixin,
             import json
             if not image_1.vector:
                 file = {'path': open(image_1.image.path, 'rb').read()}
-                r = json.loads(requests.post(url, files=file).content.decode("utf-8"))
+                r = json.loads(requests.post(url, files=file).content)
                 image_1.vector = r['payload']['reduced_features']
                 image_1.save(update_fields=['vector'])
             if not image_2.vector:
                 file = {'path': open(image_2.image.path, 'rb').read()}
-                r = json.loads(requests.post(url, files=file).content.decode("utf-8"))
+                r = json.loads(requests.post(url, files=file).content)
                 image_2.vector = r['payload']['reduced_features']
                 image_2.save(update_fields=['vector'])
 
             import ast
             from math import sqrt
+            from numpy import linalg as LA
             vector_1 = json.loads(image_1.vector) if type(image_1.vector) == str else image_1.vector
             vector_2 = json.loads(image_2.vector) if type(image_2.vector) == str else image_2.vector
+
+            norm_vector_1 = LA.norm(vector_1)
+            norm_vector_2 = LA.norm(vector_2)
+            for i in range(0,14):
+                vector_1[i] /= norm_vector_1
+                vector_2[i] /= norm_vector_2
+
             distance_power_of_2 = 0
             for i in range(0,14):
                 distance_power_of_2 += (vector_1[i]-vector_2[i])**2

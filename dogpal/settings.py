@@ -95,11 +95,10 @@ WSGI_APPLICATION = 'dogpal.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '161.246.6.240',
+        'HOST': 'localhost',
         'NAME': 'dogpal',
         'USER': 'root',
-        'PASSWORD': "1234",
-
+        'PASSWORD': "saigmaster",
     }
 }
 
