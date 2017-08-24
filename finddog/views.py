@@ -51,7 +51,6 @@ class DistanceVectorViewSet(mixins.CreateModelMixin,
             if not image_1.vector:
                 file = {'path': open(image_1.image.path, 'rb').read()}
                 r = json.loads(requests.post(url, files=file).content.decode('utf-8'))
-                print(r)
                 image_1.vector = r['payload']['reduced_features']
                 image_1.save(update_fields=['vector'])
             if not image_2.vector:
