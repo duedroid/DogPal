@@ -40,7 +40,3 @@ class Appointment(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
-
-    def toggle_is_overdate(self):
-        self.is_overdate = True
-        self.save()

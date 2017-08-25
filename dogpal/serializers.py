@@ -36,4 +36,13 @@ class HomeSerializer(serializers.ModelSerializer):
 
     def get_appointment(self, dog):
         appointment = Appointment.objects.filter(status=True, dog=dog)
+        if not appointment:
+            return None
+
+        from datetime import datetime, timedelta
+
+        for obj in appointment:
+            if obj.date <= datetime.now().date() + timedelta(days=1):
+                obj.is_overdate = True
+                obj.save()
         return AppointmentSerializer(appointment, many=True).data
