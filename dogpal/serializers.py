@@ -2,21 +2,7 @@ from rest_framework import serializers
 
 from dog.models import Dog, Picture
 from veterinarian.models import Appointment, Hospital
-from dog.serializers import DogImageSerializer
-
-
-class DogListSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Dog
-        fields = ('id', 'name',)
-
-    def to_representation(self, instance):
-        data = super(DogListSerializer, self).to_representation(instance)
-        data.update({
-            'image': DogImageSerializer(Picture.objects.filter(dog=instance.id).first()).data
-        })
-        return data
+from dog.serializers import DogListSerializer
 
 
 class HospitalSerializer(serializers.ModelSerializer):
@@ -27,31 +13,27 @@ class HospitalSerializer(serializers.ModelSerializer):
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    hospital = serializers.SerializerMethodField()
+    dog = serializers.SerializerMethodField()
 
     class Meta:
         model = Appointment
-        fields = ('id', 'date', 'is_overdate')
+        fields = ('id', 'date', 'is_overdate', 'hospital', 'dog')
 
-    def to_representation(self, instance):
-        data = super(AppointmentSerializer, self).to_representation(instance)
-        data.update({
-            'hospital': instance.hospital.name,
-            'dog': DogListSerializer(instance.dog).data
-        })
-        return data
+    def get_hospital(self, appointment):
+        return appointment.hospital.name
+
+    def get_dog(self, appointment):
+        return DogListSerializer(appointment.dog).data
 
 
 class HomeSerializer(serializers.ModelSerializer):
+    appointment = serializers.SerializerMethodField()
 
     class Meta:
         model = Dog
-        fields = ()
+        fields = ('appointment',)
 
-    def to_representation(self, instance):
-        data = super(HomeSerializer, self).to_representation(instance)
-        dog = Dog.objects.filter(id=instance.id)
-        data.update({
-            'dog': DogListSerializer(dog, many=True).data,
-            'appointment': AppointmentSerializer(Appointment.objects.filter(status=True, dog=dog), many=True).data,
-        })
-        return data
+    def get_appointment(self, dog):
+        appointment = Appointment.objects.filter(status=True, dog=dog)
+        return AppointmentSerializer(appointment, many=True).data

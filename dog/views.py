@@ -1,9 +1,9 @@
 from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import JSONParser
 
-from dog.serializers import AddorEditDogSerializer, DogDetailSerializer, DogImageSerializer
+from dog.serializers import *
 from account.models import Account
 from .models import Dog, Picture
 
@@ -11,8 +11,8 @@ from .models import Dog, Picture
 class AddDogImageViewSet(mixins.CreateModelMixin,
                          viewsets.GenericViewSet):
     queryset = Picture.objects.all()
-    serializer_class = DogImageSerializer
-    permission_classes = (IsAuthenticated,)
+    serializer_class = DogImageUploadSerializer
+    # parser_classes = (JSONParser,)
 
     def create(self, request):
         if request.user.is_veterinarian:
@@ -20,7 +20,7 @@ class AddDogImageViewSet(mixins.CreateModelMixin,
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            dog = Dog.objects.filter(account=request.user).first()
+            dog = Dog.objects.filter(id=serializer.data['dog_id'], account=request.user).first()
             image = Picture.objects.create(image=serializer.data['image'], dog=dog)
             image.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -34,7 +34,6 @@ class AddorEditDogViewSet(mixins.CreateModelMixin,
                           viewsets.GenericViewSet):
     queryset = Dog.objects.all()
     serializer_class = AddorEditDogSerializer
-    permissions_classes = (IsAuthenticated,)
 
     def create(self, request):
         if request.user.is_veterinarian:
@@ -59,7 +58,7 @@ class AddorEditDogViewSet(mixins.CreateModelMixin,
                 dominance=serializer.data['dominance'],
                 status=serializer.data['status'])
             dog.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'id': dog.id}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -98,13 +97,17 @@ class AddorEditDogViewSet(mixins.CreateModelMixin,
         return Response(serializer.data)
 
 
-
-
-class DogDetailViewSet(mixins.RetrieveModelMixin,
-                       viewsets.GenericViewSet):
+class DogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Dog.objects.all()
-    serializer_class = DogDetailSerializer
-    permissions_classes = (IsAuthenticated,)
+    serializer_class = DogListSerializer
+
+    def list(self, request):
+        if request.user.is_veterinarian:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        dog = Dog.objects.filter(account=request.user)
+        serializer = self.get_serializer(dog, many=True)
+        return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         if request.user.is_veterinarian:

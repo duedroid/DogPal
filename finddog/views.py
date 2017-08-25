@@ -19,8 +19,10 @@ class AddImageViewSet(mixins.CreateModelMixin,
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
-        has_image = Image.objects.filter(name=request.data['name']).first()
-        if serializer.is_valid() and not has_image:
+
+        if Image.objects.filter(name=request.data['name']).first():
+            return Response({'This name has already exist'}, status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid():
             image = Image.objects.create(name=serializer.data['name'],
                                          image=request.data.get('image'))
             image.save()
@@ -37,12 +39,14 @@ class DistanceVectorViewSet(mixins.CreateModelMixin,
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid() and serializer.data['name_1'] != serializer.data['name_2']:
+        if serializer.is_valid():
             image_1 = Image.objects.filter(name=serializer.data['name_1']).first()
             image_2 = Image.objects.filter(name=serializer.data['name_2']).first()
 
-            if not image_1 or not image_2:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if not image_1:
+                return Response({'name_1 image is not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            if not image_2:
+                return Response({'name_2 image is not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
             url = 'http://161.246.6.240:10100/server/dog/extract_features/'
 
