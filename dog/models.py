@@ -31,7 +31,7 @@ class Dog(models.Model):
     micro_no = models.CharField(max_length=100, blank=True, null=True)
     color_primary = models.CharField(max_length=20, blank=True, null=True)
     color_secondary = models.CharField(max_length=20, blank=True, null=True)
-    location = models.TextField(max_length=300)
+    location = models.TextField()
     dominance = models.CharField(max_length=200)
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1)
 

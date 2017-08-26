@@ -15,4 +15,4 @@ class VetHosAdmin(admin.ModelAdmin):
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ('date',)
+    list_display = ('key',)

@@ -5,13 +5,6 @@ from veterinarian.models import Appointment, Hospital
 from dog.serializers import DogListSerializer
 
 
-class HospitalSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Hospital
-        fields = ('id', 'name',)
-
-
 class AppointmentSerializer(serializers.ModelSerializer):
     hospital = serializers.SerializerMethodField()
     dog = serializers.SerializerMethodField()
@@ -28,21 +21,21 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
 
 class HomeSerializer(serializers.ModelSerializer):
-    appointment = serializers.SerializerMethodField()
 
     class Meta:
         model = Dog
-        fields = ('appointment',)
+        fields = ()
 
-    def get_appointment(self, dog):
-        appointment = Appointment.objects.filter(status=True, dog=dog)
+    def to_representation(self, instance):
+        appointment = Appointment.objects.filter(status=True, dog=instance).order_by('-date')
         if not appointment:
             return None
 
         from datetime import datetime, timedelta
 
         for obj in appointment:
-            if obj.date <= datetime.now().date() + timedelta(days=1):
+            if obj.date < datetime.now().date() + timedelta(days=1):
                 obj.is_overdate = True
-                obj.save()
+                obj.save(update_fields=['is_overdate'])
+
         return AppointmentSerializer(appointment, many=True).data

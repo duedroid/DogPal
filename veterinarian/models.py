@@ -29,6 +29,7 @@ class VetHos(models.Model):
 
 
 class Appointment(models.Model):
+    key = models.CharField(max_length=6, default='')
     hospital = models.ForeignKey(Hospital, related_name='appointment_hospital')
     dog = models.ForeignKey(Dog, related_name='appointment_dog')
     date = models.DateField()
@@ -40,3 +41,21 @@ class Appointment(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+    def __str__(self):
+        return self.key
+
+    def generate_key():
+        import random
+        import string
+
+        keys = ''.join(random.sample(string.ascii_letters+string.digits, 6))
+        all_key = []
+        for appointment in Appointment.objects.all():
+            all_key.append(appointment.key)
+
+        while True:
+            if keys in all_key:
+                keys = ''.join(random.sample(string.ascii_letters+string.digits, 6))
+            else:
+                return keys
