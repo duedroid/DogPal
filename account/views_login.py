@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
 
-from .serializers import UserLogInSerializer
+from .serializers import UserLogInSerializer, UserAccountSerializer
 from account.models import Account
 
 
@@ -40,7 +40,7 @@ class UserLoginViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
                 raise AuthenticationFailed(msg)
 
             login(request, user)
-            return Response(status=status.HTTP_200_OK)
+            return Response(UserAccountSerializer(user).data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
