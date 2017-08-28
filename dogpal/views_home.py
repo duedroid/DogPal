@@ -1,10 +1,11 @@
 from rest_framework import viewsets, mixins
 from rest_framework import status
-from .serializers import HomeSerializer
+from rest_framework.response import Response
 from account.permissions import IsUserAccount
 
 from dog.models import Dog
-from rest_framework.response import Response
+from .serializers import HomeSerializer
+from dog.serializers import DogListSerializer
 
 
 class HomeViewSet(mixins.ListModelMixin,
@@ -16,6 +17,7 @@ class HomeViewSet(mixins.ListModelMixin,
     def list(self, request):
         dog = Dog.objects.filter(account=request.user)
         serializer = {
+            'dog_list': DogListSerializer(dog, many=True).data,
             'appointment_list': HomeSerializer(dog, many=True).data
         }
         return Response(serializer)

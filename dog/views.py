@@ -2,6 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+from account.permissions import IsUserAccount
 
 from dog.serializers import *
 from account.models import Account
@@ -12,6 +13,7 @@ class AddDogImageViewSet(mixins.CreateModelMixin,
                          viewsets.GenericViewSet):
     queryset = Picture.objects.all()
     serializer_class = DogImageUploadSerializer
+    permission_classes = (IsUserAccount,)
     # parser_classes = (JSONParser,)
 
     def create(self, request):
@@ -34,6 +36,7 @@ class AddorEditDogViewSet(mixins.CreateModelMixin,
                           viewsets.GenericViewSet):
     queryset = Dog.objects.all()
     serializer_class = AddorEditDogSerializer
+    permission_classes = (IsUserAccount,)
 
     def create(self, request):
         if request.user.is_veterinarian:
@@ -100,6 +103,7 @@ class AddorEditDogViewSet(mixins.CreateModelMixin,
 class DogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Dog.objects.all()
     serializer_class = DogListSerializer
+    permission_classes = (IsUserAccount,)
 
     def list(self, request):
         if request.user.is_veterinarian:

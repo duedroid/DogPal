@@ -66,7 +66,9 @@ class SearchAppointmentViewSet(mixins.CreateModelMixin,
             hospital = Hospital.objects.filter(id=serializer.data['hospital_id'])
 
             # appointment
-            appointment = Appointment.objects.filter(key=search).first()
+            appointment = Appointment.objects.filter(key=search,
+                                                     hospital=hospital,
+                                                     status=True).first()
             if appointment:
                 return Response({
                     'appointment_list': AppointmentResultSerializer(appointment).data,
@@ -75,7 +77,9 @@ class SearchAppointmentViewSet(mixins.CreateModelMixin,
                 }, status=status.HTTP_200_OK)
             else:
                 appointment_list = []
-                appointment = Appointment.objects.filter(key__icontains=search)
+                appointment = Appointment.objects.filter(key__icontains=search,
+                                                         hospital=hospital,
+                                                         status=True)
                 for obj in appointment:
                     appointment_list.append(obj)
 
@@ -83,19 +87,20 @@ class SearchAppointmentViewSet(mixins.CreateModelMixin,
             from dog.serializers import DogUserSerializer
             from account.serializers import UserDogSerializer
 
-            dog_result_list = []
-            account_result_list = []
-
             # dog
+            dog_result_list = []
             dog_list = Dog.objects.filter(Q(name__icontains=search) | Q(location__icontains=search))
             if dog_list:
                 for dog in dog_list:
                     dog_result_list.append(dog)
-                    appointment = Appointment.objects.filter(dog=dog, hospital=hospital).first()
+                    appointment = Appointment.objects.filter(dog=dog,
+                                                             hospital=hospital,
+                                                             status=True).first()
                     if appointment and appointment not in appointment_list:
                         appointment_list.append(appointment)
 
             # user
+            account_result_list = []
             account_list = Account.objects.filter(Q(first_name__icontains=search) | \
                                                   Q(last_name__icontains=search) | \
                                                   Q(tel_1__icontains=search) | \
@@ -108,8 +113,9 @@ class SearchAppointmentViewSet(mixins.CreateModelMixin,
                     dog_list = Dog.objects.filter(account=account)
                     if dog_list:
                         for dog in dog_list:
-                            dog_result_list.append(dog)
-                            appointment = Appointment.objects.filter(dog=dog, hospital=hospital).first()
+                            appointment = Appointment.objects.filter(dog=dog,
+                                                                     hospital=hospital,
+                                                                     status=True).first()
                             if appointment and appointment not in appointment_list:
                                 appointment_list.append(appointment)
             response = {
