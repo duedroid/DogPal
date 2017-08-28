@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from account.models import Account
 from .models import Dog, Picture
 from veterinarian.models import Appointment, Hospital
 from vaccination.models import VaccineRecord
@@ -65,4 +64,23 @@ class DogNameListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dog
-        fields = ('name',)
+        fields = ('id', 'name',)
+
+
+class DogUserSerializer(serializers.ModelSerializer):
+    account_id = serializers.SerializerMethodField()
+    account_name = serializers.SerializerMethodField()
+    dog = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Dog
+        fields = ('account_id', 'account_name', 'dog')
+
+    def get_dog(self, dog):
+        return DogNameListSerializer(dog).data
+
+    def get_account_name(self, dog):
+        return dog.account.first_name + " " + dog.account.last_name
+
+    def get_account_id(self, dog):
+        return dog.account.id

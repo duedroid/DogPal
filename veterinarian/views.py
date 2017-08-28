@@ -62,26 +62,37 @@ class SearchAppointmentViewSet(mixins.CreateModelMixin,
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            from django.db.models import Q
-
             search = serializer.data['search']
+            hospital = Hospital.objects.filter(id=serializer.data['hospital_id'])
 
             # appointment
             appointment = Appointment.objects.filter(key=search).first()
             if appointment:
                 return Response({
                     'appointment_list': AppointmentResultSerializer(appointment).data,
-                    'account': []
-                }, status=status.HTTP_201_CREATED)
+                    'account_list': [],
+                    'dog_list': []
+                }, status=status.HTTP_200_OK)
+            else:
+                appointment_list = []
+                appointment = Appointment.objects.filter(key__icontains=search)
+                for obj in appointment:
+                    appointment_list.append(obj)
 
-            appointment_list = []
+            from django.db.models import Q
+            from dog.serializers import DogUserSerializer
+            from account.serializers import UserDogSerializer
+
+            dog_result_list = []
+            account_result_list = []
 
             # dog
             dog_list = Dog.objects.filter(Q(name__icontains=search) | Q(location__icontains=search))
             if dog_list:
                 for dog in dog_list:
-                    appointment = Appointment.objects.filter(dog=dog).first()
-                    if appointment:
+                    dog_result_list.append(dog)
+                    appointment = Appointment.objects.filter(dog=dog, hospital=hospital).first()
+                    if appointment and appointment not in appointment_list:
                         appointment_list.append(appointment)
 
             # user
@@ -93,18 +104,20 @@ class SearchAppointmentViewSet(mixins.CreateModelMixin,
                                                   Q(email__icontains=search))
             if account_list:
                 for account in account_list:
+                    account_result_list.append(account)
                     dog_list = Dog.objects.filter(account=account)
                     if dog_list:
                         for dog in dog_list:
-                            appointment = Appointment.objects.filter(dog=dog).first()
+                            dog_result_list.append(dog)
+                            appointment = Appointment.objects.filter(dog=dog, hospital=hospital).first()
                             if appointment and appointment not in appointment_list:
                                 appointment_list.append(appointment)
-
             response = {
                 'appointment_list': AppointmentResultSerializer(appointment_list, many=True).data,
-                'account': []
+                'account_list': UserDogSerializer(account_result_list, many=True).data,
+                'dog_list': DogUserSerializer(dog_result_list, many=True).data,
             }
 
-            return Response(response, status=status.HTTP_201_CREATED)
+            return Response(response, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
