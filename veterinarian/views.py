@@ -1,6 +1,7 @@
 from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from account.permissions import IsVeterinarianAccount
 from .serializers import AddAppointmentSerializer, HospitalListSerializer, AppointmentResultSerializer, SearchAppointmentSerializer
@@ -13,6 +14,7 @@ class AddAppointmentViewSet(mixins.CreateModelMixin,
                             viewsets.GenericViewSet):
     queryset = Appointment.objects.all()
     serializer_class = AddAppointmentSerializer
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -46,6 +48,7 @@ class HospitalViewSet(mixins.ListModelMixin,
                       viewsets.GenericViewSet):
     queryset = Hospital.objects.all()
     serializer_class = HospitalListSerializer
+    permission_classes = (IsAuthenticated,)
 
     def list(self, request):
         queryset = self.get_queryset()
