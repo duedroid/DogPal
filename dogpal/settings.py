@@ -9,6 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 SESSION_COOKIE_AGE = 3153600000
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '7f8o4op=!igj#hm$b$t$1h-2^$z9=-po%bdke5%2kavuc83-cn'
 
@@ -29,11 +30,11 @@ LOGIN_URL = '/admin/login/'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ],
 }
 

@@ -9,7 +9,7 @@ from .views_home import HomeViewSet
 from dog.views import DogViewSet, AddDogImageViewSet, AddorEditDogViewSet
 from veterinarian.views import AddAppointmentViewSet, HospitalViewSet, SearchAppointmentViewSet
 from account.views_register import UserRegisterViewSet
-from account.views_login import LogoutView, UserLoginViewSet
+from account.views_login import LogoutView, UserLoginViewSet, CheckSessionExpired
 from finddog.views import AddImageViewSet, DistanceVectorViewSet
 
 
@@ -33,4 +33,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
     url(r'^api/logout/', LogoutView.as_view()),
+    url(r'^api/session/', CheckSessionExpired.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
