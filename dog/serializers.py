@@ -53,7 +53,7 @@ class DogDetailSerializer(serializers.ModelSerializer):
                   'location', 'dominance', 'vaccine', 'image')
 
     def get_vaccine(self, dog):
-        vaccine = VaccineRecord.objects.filter(dog=dog, status=True)
+        vaccine = VaccineRecord.objects.filter(dog=dog)
         return VaccineRecordSerailizer(vaccine, many=True).data
 
     def get_image(self, dog):
