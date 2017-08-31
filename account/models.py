@@ -87,6 +87,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
 
     specialties = models.CharField(max_length=100, null=True, blank=True)
+    license = models.CharField(max_length=100, null=True, blank=True)
 
     last_active = models.DateTimeField(_('last active'), blank=True, null=True)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)

@@ -33,7 +33,6 @@ class AddAppointmentViewSet(mixins.CreateModelMixin,
                 stat = True
 
             appointment = Appointment.objects.create(
-                key=Appointment.generate_key(),
                 hospital=hospital,
                 dog=dog,
                 date=serializer.data['date'],

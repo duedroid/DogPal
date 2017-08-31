@@ -36,7 +36,6 @@ class VaccineStockDetail(models.Model):
         ordering = ['-timestamp']
 
 
-
 class VaccineRecord(models.Model):
     next_vaccine = models.DateField()
     date_record = models.DateField(default=date.today)

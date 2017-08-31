@@ -19,7 +19,7 @@ class Dog(models.Model):
         (2, 'Death')
     )
 
-    account = models.ForeignKey(settings.AUTH_USER_MODEL)
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     name = models.CharField(max_length=200)
     blood_type = models.CharField(max_length=20)
     breed = models.CharField(max_length=100)
