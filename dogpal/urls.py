@@ -8,6 +8,7 @@ from rest_framework.routers import DefaultRouter
 from .views_home import HomeViewSet
 from dog.views import DogViewSet, AddDogImageViewSet, AddorEditDogViewSet
 from veterinarian.views import AddAppointmentViewSet, HospitalViewSet, SearchAppointmentViewSet
+from vaccination.views import VaccineBookViewSet
 from account.views_register import UserRegisterViewSet
 from account.views_login import LogoutView, UserLoginViewSet, CheckSessionExpired
 from finddog.views import AddImageViewSet, DistanceVectorViewSet
@@ -22,6 +23,7 @@ router.register(r'add-image', AddDogImageViewSet)
 router.register(r'add-appointment', AddAppointmentViewSet)
 router.register(r'hospital', HospitalViewSet)
 router.register(r'search-appointment', SearchAppointmentViewSet)
+router.register(r'vaccine_book', VaccineBookViewSet)
 router.register(r'dog', DogViewSet)
 router.register(r'register', UserRegisterViewSet)
 router.register(r'login', UserLoginViewSet)

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Dog, Picture
 from veterinarian.models import Appointment, Hospital
 from vaccination.models import VaccineRecord
-from vaccination.serializers import VaccineRecordSerailizer
+from vaccination.serializers import VaccineRecordSerializer
 from utils.serializers import Base64ImageField
 
 
@@ -54,7 +54,7 @@ class DogDetailSerializer(serializers.ModelSerializer):
 
     def get_vaccine(self, dog):
         vaccine = VaccineRecord.objects.filter(dog=dog)
-        return VaccineRecordSerailizer(vaccine, many=True).data
+        return VaccineRecordSerializer(vaccine, many=True).data
 
     def get_image(self, dog):
         return DogImageSerializer(Picture.objects.filter(dog=dog), many=True).data

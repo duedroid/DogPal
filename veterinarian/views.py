@@ -65,7 +65,7 @@ class SearchAppointmentViewSet(mixins.CreateModelMixin,
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             search = serializer.data['search']
-            hospital = Hospital.objects.filter(id=serializer.data['hospital_id'])
+            hospital = Hospital.objects.filter(id=serializer.data['hospital_id']).first()
 
             # appointment
             appointment = Appointment.objects.filter(key=search,
