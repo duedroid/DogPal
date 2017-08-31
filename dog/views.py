@@ -8,6 +8,7 @@ from .serializers import *
 from account.models import Account
 from .models import *
 
+
 class DeleteDogViewSet(mixins.RetrieveModelMixin,
                        viewsets.GenericViewSet):
     queryset = Dog.objects.all()

@@ -4,8 +4,8 @@ from rest_framework.response import Response
 
 from account.permissions import IsVeterinarianAccount
 from .serializers import RecieveAppointmentSerializer, VaccineForBookSerializer, VaccineRecordBookSerailizer
-from .models import VaccineFor, VaccineRecord, VaccineStockDetail
-from veterinarian.models import Appointment, Hospital
+from .models import *
+from veterinarian.models import Appointment
 from account.models import Account
 
 
