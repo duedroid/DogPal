@@ -7,7 +7,13 @@ from vaccination.serializers import VaccineRecordSerializer
 from utils.serializers import Base64ImageField
 
 
+class DeleteDogSerializer(serializers.Serializer):
+
+    dog_id = serializers.IntegerField(required=True)
+
+
 class DogImageUploadSerializer(serializers.Serializer):
+
     dog_id = serializers.IntegerField(required=True)
     image = Base64ImageField(max_length=None, use_url=False, allow_empty_file=True, allow_null=True, required=False)
 

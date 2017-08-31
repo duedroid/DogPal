@@ -5,13 +5,13 @@ from django.contrib import admin
 from rest_framework_swagger.views import get_swagger_view
 from rest_framework.routers import DefaultRouter
 
-from .views_home import HomeViewSet
-from dog.views import DogViewSet, AddDogImageViewSet, AddorEditDogViewSet
-from veterinarian.views import AddAppointmentViewSet, HospitalViewSet, SearchAppointmentViewSet
-from vaccination.views import VaccineBookViewSet
-from account.views_register import UserRegisterViewSet
-from account.views_login import LogoutView, UserLoginViewSet, CheckSessionExpired
-from finddog.views import AddImageViewSet, DistanceVectorViewSet
+from .views_home import *
+from dog.views import *
+from veterinarian.views import *
+from vaccination.views import *
+from account.views_register import *
+from account.views_login import *
+from finddog.views import *
 
 
 schema_view = get_swagger_view(title='DogPal API')
@@ -19,6 +19,7 @@ router = DefaultRouter()
 
 router.register(r'home', HomeViewSet)
 router.register(r'add-dog', AddorEditDogViewSet)
+router.register(r'delete-dog', DeleteDogViewSet)
 router.register(r'add-image', AddDogImageViewSet)
 router.register(r'add-appointment', AddAppointmentViewSet)
 router.register(r'hospital', HospitalViewSet)

@@ -4,9 +4,24 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from account.permissions import IsUserAccount
 
-from dog.serializers import *
+from .serializers import *
 from account.models import Account
-from .models import Dog, Picture
+from .models import *
+
+class DeleteDogViewSet(mixins.RetrieveModelMixin,
+                       viewsets.GenericViewSet):
+    queryset = Dog.objects.all()
+    serializer_class = DeleteDogSerializer
+    permission_classes = (IsUserAccount,)
+
+    def retrieve(self, request, pk=None):
+        dog = Dog.objects.filter(id=pk, account=request.user).first()
+        if not dog:
+            return Response({'Dog is not Exist'}, status=status.HTTP_400_BAD_REQUEST)
+        dog.account = None
+        dog.save(update_fields=['account'])
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class AddDogImageViewSet(mixins.CreateModelMixin,
