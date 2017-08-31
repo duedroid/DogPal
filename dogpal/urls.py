@@ -19,7 +19,6 @@ router = DefaultRouter()
 
 router.register(r'home', HomeViewSet)
 router.register(r'add-dog', AddorEditDogViewSet)
-router.register(r'delete-dog', DeleteDogViewSet)
 router.register(r'add-image', AddDogImageViewSet)
 router.register(r'add-appointment', AddAppointmentViewSet)
 router.register(r'hospital', HospitalViewSet)

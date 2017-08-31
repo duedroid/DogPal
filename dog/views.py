@@ -2,27 +2,12 @@ from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+from rest_framework.decorators import detail_route, list_route
 from account.permissions import IsUserAccount
 
 from .serializers import *
 from account.models import Account
 from .models import *
-
-
-class DeleteDogViewSet(mixins.RetrieveModelMixin,
-                       viewsets.GenericViewSet):
-    queryset = Dog.objects.all()
-    serializer_class = DeleteDogSerializer
-    permission_classes = (IsUserAccount,)
-
-    def retrieve(self, request, pk=None):
-        dog = Dog.objects.filter(id=pk, account=request.user).first()
-        if not dog:
-            return Response({'Dog is not Exist'}, status=status.HTTP_400_BAD_REQUEST)
-        dog.account = None
-        dog.save(update_fields=['account'])
-
-        return Response(status=status.HTTP_200_OK)
 
 
 class AddDogImageViewSet(mixins.CreateModelMixin,
@@ -118,3 +103,13 @@ class DogViewSet(viewsets.ReadOnlyModelViewSet):
         dog = Dog.objects.filter(id=pk).first()
         serializer = DogDetailSerializer(dog)
         return Response(serializer.data)
+
+    @detail_route(methods=['get'])
+    def delete(self, request, pk=None):
+        dog = Dog.objects.filter(id=pk, account=request.user).first()
+        if not dog:
+            return Response({'Dog is not Exist'}, status=status.HTTP_400_BAD_REQUEST)
+        dog.account = None
+        dog.save(update_fields=['account'])
+
+        return Response(status=status.HTTP_200_OK)
