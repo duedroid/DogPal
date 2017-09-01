@@ -109,17 +109,3 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return '{0} {1}'.format(self.first_name, self.last_name)
-
-    @staticmethod
-    def is_unique_email(email):
-        return not Account.objects.filter(username=email).exists()
-
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True

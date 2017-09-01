@@ -108,3 +108,13 @@ class DogViewSet(viewsets.ReadOnlyModelViewSet):
         dog.save(update_fields=['account'])
 
         return Response(status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def image(self, request, pk=None):
+        dog = Dog.objects.filter(id=pk, account=request.user).first()
+        if not dog:
+            return Response({'Dog is not Exist'}, status=status.HTTP_400_BAD_REQUEST)
+        image = Picture.objects.filter(dog=dog)
+        response = DogImageSerializer(image, many=True).data
+
+        return Response(response, status=status.HTTP_200_OK)
