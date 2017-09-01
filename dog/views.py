@@ -1,7 +1,6 @@
 from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.parsers import JSONParser
 from rest_framework.decorators import detail_route, list_route
 from account.permissions import IsUserAccount
 
@@ -15,17 +14,13 @@ class AddDogImageViewSet(mixins.CreateModelMixin,
     queryset = Picture.objects.all()
     serializer_class = DogImageUploadSerializer
     permission_classes = (IsUserAccount,)
-    # parser_classes = (JSONParser,)
 
     def create(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            dog = Dog.objects.filter(id=serializer.data['dog_id'], account=request.user).first()
-            image = Picture.objects.create(image=serializer.data['image'], dog=dog)
-            image.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class AddorEditDogViewSet(mixins.CreateModelMixin,

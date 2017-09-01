@@ -7,14 +7,19 @@ from vaccination.serializers import VaccineRecordSerializer
 from utils.serializers import Base64ImageField
 
 
-class DogImageUploadSerializer(serializers.Serializer):
+class DogImageUploadSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(max_length=None, use_url=False, required=True)
 
-    dog_id = serializers.IntegerField(required=True)
-    image = Base64ImageField(max_length=None, use_url=False, allow_empty_file=True, allow_null=True, required=False)
+    class Meta:
+        model = Picture
+        fields = ('id', 'dog', 'image')
+
+    def create(self, validated_data):
+        return Picture.objects.create(dog=validated_data['dog'],
+                                      image=validated_data['image'])
 
 
 class DogImageSerializer(serializers.ModelSerializer):
-    image = Base64ImageField(max_length=None, use_url=False, allow_empty_file=True, allow_null=True, required=False)
 
     class Meta:
         model = Picture
