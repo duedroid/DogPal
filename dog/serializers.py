@@ -26,7 +26,17 @@ class DogImageSerializer(serializers.ModelSerializer):
         fields = ('id', 'image')
 
 
-class AddorEditDogSerializer(serializers.ModelSerializer):
+class AddDogSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Dog
+        fields = ('name', 'blood_type', 'breed', 'current_weight',
+                  'age', 'birth_day', 'is_sterize', 'gender',
+                  'micro_no', 'color_primary', 'color_secondary',
+                  'location', 'dominance')
+
+
+class EditDogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dog

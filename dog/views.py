@@ -28,8 +28,22 @@ class AddorEditDogViewSet(mixins.CreateModelMixin,
                           mixins.RetrieveModelMixin,
                           viewsets.GenericViewSet):
     queryset = Dog.objects.all()
-    serializer_class = AddorEditDogSerializer
+    serializer_class = EditDogSerializer
     permission_classes = (IsUserAccount,)
+
+    action_serializers = {
+        'retrieve': EditDogSerializer,
+        'create': AddDogSerializer,
+        'update': EditDogSerializer,
+        'partial_update': EditDogSerializer,
+    }
+
+    def get_serializer_class(self):
+        if hasattr(self, 'action_serializers'):
+            if self.action in self.action_serializers:
+                return self.action_serializers[self.action]
+
+        return super(AddorEditDogViewSet, self).get_serializer_class()
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -55,8 +69,9 @@ class AddorEditDogViewSet(mixins.CreateModelMixin,
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def update(self, request, pk=None):
-        serializer = self.serializer_class(data=request.data)
+    def update(self, request, pk=None, **kwargs):
+        partial = kwargs.pop('partial', False)
+        serializer = self.serializer_class(data=request.data, partial=partial)
         if serializer.is_valid():
             dog = Dog.objects.filter(id=pk, account=request.user).first()
             dog.name = serializer.data['name']
@@ -78,9 +93,13 @@ class AddorEditDogViewSet(mixins.CreateModelMixin,
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
+
     def retrieve(self, request, pk=None):
         dog = Dog.objects.filter(id=pk, account=request.user).first()
-        serializer = AddorEditDogSerializer(dog)
+        serializer = EditDogSerializer(dog)
         return Response(serializer.data)
 
 
@@ -109,12 +128,3 @@ class DogViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response(status=status.HTTP_200_OK)
 
-    @detail_route(methods=['get'])
-    def image(self, request, pk=None):
-        dog = Dog.objects.filter(id=pk, account=request.user).first()
-        if not dog:
-            return Response({'Dog is not Exist'}, status=status.HTTP_400_BAD_REQUEST)
-        image = Picture.objects.filter(dog=dog)
-        response = DogImageSerializer(image, many=True).data
-
-        return Response(response, status=status.HTTP_200_OK)
